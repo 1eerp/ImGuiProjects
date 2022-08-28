@@ -1,5 +1,6 @@
 #include "Calculator.h"
 #include <iostream>
+#include <algorithm>
 
 CalculatorData::CalculatorData()
 {
@@ -7,6 +8,22 @@ CalculatorData::CalculatorData()
 	sNumber = "0";
 	number = 0;
 	result = 0;
+	operations =	 {	
+						"+/-", 
+						".", 
+						"%", 
+						"C", 
+						"CE", 
+						"DEL", 
+						"1/x", 
+						"x^2", 
+						"sqrt", 
+						"/", 
+						"x", 
+						"-", 
+						"+", 
+						"="
+					};
 }
 
 std::string& CalculatorData::GetCalculationString()
@@ -19,13 +36,61 @@ std::string& CalculatorData::GetResultString()
 	return sNumber;
 }
 
-void CalculatorData::UpdateNumber(int digit)
+void CalculatorData::AppendDigit(int digit)
 {
 	number *= 10;
 	number += digit;
 
 	sNumber = std::to_string(number);
 }
+
+void CalculatorData::SetOperation(const char* c)
+{
+	auto pos = std::find(operations.begin(), operations.end(), c);
+	if (pos == operations.end()) std::cout << "Fix Operation Vec";
+	op = pos - operations.begin();
+}
+
+void CalculatorData::PerformOperation()
+{
+	switch (op) {
+		case 0:
+			number = -number;
+			sNumber = std::to_string(number);
+			break;
+		case 1:
+			break;
+		case 2:
+			number /= 100;
+			sNumber = std::to_string(number) + std::string("%");
+			break;
+		case 3:
+			break;
+		case 4:
+			break;
+		case 5:
+			break;
+		case 6:
+			break;
+		case 7:
+			break;
+		case 9:
+			break;
+		case 10:
+			break;
+		case 11:
+			break;
+		case 12:
+			break;
+		case 13:
+			break;
+		default:
+			break;
+
+
+	}
+}
+
 
 Calculator::Calculator()
 {
@@ -70,15 +135,24 @@ void Calculator::DisplayDigitButton(const char* c)
 {
 	if (ImGui::Button(c, buttonSize))
 	{
-		data.UpdateNumber((int)c[0]-48);
+		data.AppendDigit((int)c[0]-48);
 	}
 }
 
-void Calculator::DisplayOperatorButton(const char* c)
+void Calculator::DisplayUnaryOperatorButton(const char* c)
 {
 	if (ImGui::Button(c, buttonSize))
 	{
+		data.SetOperation(c);
+		data.PerformOperation();
+	}
+}
 
+void Calculator::DisplayBinaryOperatorButton(const char* c)
+{
+	if (ImGui::Button(c, buttonSize))
+	{
+		data.SetOperation(c);
 	}
 }
 
@@ -116,11 +190,11 @@ void Calculator::DisplayDigitsGroup()
 
 	// Row 4
 	ImGui::BeginGroup();
-	DisplayOperatorButton("+/-");
+	DisplayUnaryOperatorButton("+/-");
 	ImGui::SameLine();
 	DisplayDigitButton("0");
 	ImGui::SameLine();
-	DisplayOperatorButton(".");
+	DisplayUnaryOperatorButton(".");
 	ImGui::EndGroup();
 
 	ImGui::EndGroup();
@@ -134,24 +208,24 @@ void Calculator::DisplayOperatorGroup1()
 
 	// Row 1
 	ImGui::BeginGroup();
-	DisplayOperatorButton("%");
+	DisplayUnaryOperatorButton("%");
 	ImGui::SameLine();
-	DisplayOperatorButton("CE");
+	DisplayUnaryOperatorButton("CE");
 	ImGui::SameLine();
-	DisplayOperatorButton("C");
+	DisplayUnaryOperatorButton("C");
 	ImGui::SameLine();
-	DisplayOperatorButton("DEL");
+	DisplayUnaryOperatorButton("DEL");
 	ImGui::EndGroup();
 
 	// Row 2
 	ImGui::BeginGroup();
-	DisplayOperatorButton("1/x");
+	DisplayUnaryOperatorButton("1/x");
 	ImGui::SameLine();
-	DisplayOperatorButton("x^2");
+	DisplayUnaryOperatorButton("x^2");
 	ImGui::SameLine();
-	DisplayOperatorButton("sqrt");
+	DisplayUnaryOperatorButton("sqrt");
 	ImGui::SameLine();
-	DisplayOperatorButton("%");
+	DisplayBinaryOperatorButton("/");
 	ImGui::EndGroup();
 
 	ImGui::EndGroup();
@@ -160,10 +234,10 @@ void Calculator::DisplayOperatorGroup1()
 void Calculator::DisplayOperatorGroup2()
 {
 	ImGui::BeginGroup();
-	DisplayOperatorButton("x");
-	DisplayOperatorButton("-");
-	DisplayOperatorButton("+");
-	DisplayOperatorButton("=");
+	DisplayBinaryOperatorButton("x");
+	DisplayBinaryOperatorButton("-");
+	DisplayBinaryOperatorButton("+");
+	DisplayUnaryOperatorButton("=");
 	ImGui::EndGroup();
 }
 

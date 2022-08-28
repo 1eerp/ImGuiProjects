@@ -3,30 +3,32 @@
 #include <vector>
 #include <imgui/imgui.h>
 
-// Calculator data and methods
+// Calculator data api
 class CalculatorData
 {
 public:
 	CalculatorData();
 	std::string& GetCalculationString();
 	std::string& GetResultString();
-	void UpdateNumber(int);
-	void Operation();
+	void AppendDigit(int);
+	void SetOperation(const char*);
+	void PerformOperation();
+
 
 private:
-	std::string	sCalculation,
-				sNumber,
-				binaryOperator;
-
 	double		number,
 				result;
-	bool numberIsFloat;
+	int8_t		op;
+	bool		numberIsFloat;
+	std::string	sCalculation,
+				sNumber;
+	std::vector<std::string> operations;
 };
 
 
 
 
-// Calculator Displayer
+// Calculator Display
 class Calculator
 {
 public:
@@ -34,7 +36,8 @@ public:
 	void Render();
 private:
 	void DisplayDigitButton(const char*);
-	void DisplayOperatorButton(const char*);
+	void DisplayUnaryOperatorButton(const char*);
+	void DisplayBinaryOperatorButton(const char*);
 	void DisplayDigitsGroup();
 	void DisplayOperatorGroup1();
 	void DisplayOperatorGroup2();
